@@ -1,4 +1,4 @@
-# koscash
+# Aplikasi KosCash
 
 # Nama Anggota Kelompok
 
