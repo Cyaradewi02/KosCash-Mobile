@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "289656585073",
+    "project_id": "koscash-f14ba",
+    "storage_bucket": "koscash-f14ba.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:289656585073:android:ff1cf69f1dfe5798b9d4d0",
+        "android_client_info": {
+          "package_name": "com.example.koscash.koscash"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAh6nUNKhuWhHlnwnyy7jJpFqPC9AMnoCI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
