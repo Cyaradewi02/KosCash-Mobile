@@ -1,8 +1,82 @@
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
+import 'login_page.dart';
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+class ProfilePage extends StatefulWidget {
+  final String userName;
+  final String userEmail;
+
+  const ProfilePage({
+    super.key,
+    required this.userName,
+    required this.userEmail,
+  });
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  late String name;
+  late String email;
+
+  @override
+  void initState() {
+    super.initState();
+    name = widget.userName;
+    email = widget.userEmail;
+  }
+
+  void _editProfile() {
+    final nameController = TextEditingController(text: name);
+    final emailController = TextEditingController(text: email);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Edit Profile"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: "Nama"),
+              ),
+              TextField(
+                controller: emailController,
+                decoration: const InputDecoration(labelText: "Email"),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Batal"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  name = nameController.text;
+                  email = emailController.text;
+                });
+                Navigator.pop(context);
+              },
+              child: const Text("Simpan"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _logout() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginPage()),
+          (route) => false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,18 +106,14 @@ class ProfilePage extends StatelessWidget {
                 const CircleAvatar(
                   radius: 50,
                   backgroundColor: Colors.deepPurple,
-                  child: Icon(
-                    Icons.person,
-                    size: 50,
-                    color: Colors.white,
-                  ),
+                  child: Icon(Icons.person, size: 50, color: Colors.white),
                 ),
 
                 const SizedBox(height: 15),
 
-                const Text(
-                  "admin",
-                  style: TextStyle(
+                Text(
+                  name,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -52,11 +122,9 @@ class ProfilePage extends StatelessWidget {
 
                 const SizedBox(height: 5),
 
-                const Text(
-                  "admin@gmail.com",
-                  style: TextStyle(
-                    color: Colors.white70,
-                  ),
+                Text(
+                  email,
+                  style: const TextStyle(color: Colors.white70),
                 ),
 
                 const SizedBox(height: 30),
@@ -64,7 +132,7 @@ class ProfilePage extends StatelessWidget {
                 _menuCard(
                   icon: Icons.account_circle,
                   title: "Edit Profil",
-                  onTap: () {},
+                  onTap: _editProfile,
                 ),
 
                 const SizedBox(height: 12),
@@ -105,26 +173,12 @@ class ProfilePage extends StatelessWidget {
                   width: double.infinity,
                   height: 55,
                   child: ElevatedButton.icon(
-                    onPressed: () {
-
-                      ScaffoldMessenger.of(context)
-                          .showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            "Logout berhasil",
-                          ),
-                        ),
-                      );
-                    },
+                    onPressed: _logout,
                     icon: const Icon(Icons.logout),
                     label: const Text("Logout"),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                        BorderRadius.circular(15),
-                      ),
                     ),
                   ),
                 ),
@@ -147,21 +201,9 @@ class ProfilePage extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
       ),
       child: ListTile(
-        leading: Icon(
-          icon,
-          color: Colors.white,
-        ),
-        title: Text(
-          title,
-          style: const TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        trailing: const Icon(
-          Icons.arrow_forward_ios,
-          color: Colors.white54,
-          size: 16,
-        ),
+        leading: Icon(icon, color: Colors.white),
+        title: Text(title, style: const TextStyle(color: Colors.white)),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.white54),
         onTap: onTap,
       ),
     );

@@ -3,8 +3,46 @@ import '../constants/app_colors.dart';
 import 'main_navigation_page.dart';
 import 'register_page.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  bool isLoading = false;
+
+  void login() async {
+    final email = emailController.text.trim();
+    final password = passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Email dan password wajib diisi")),
+      );
+      return;
+    }
+
+    setState(() => isLoading = true);
+
+    await Future.delayed(const Duration(seconds: 1)); // simulasi login
+
+    setState(() => isLoading = false);
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MainNavigationPage(
+          userName: email.split('@')[0],
+          userEmail: email,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +50,7 @@ class LoginPage extends StatelessWidget {
       backgroundColor: Colors.transparent,
       body: Container(
         width: double.infinity,
-        height: double.infinity, // 🔥 INI YANG WAJIB
+        height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -27,18 +65,13 @@ class LoginPage extends StatelessWidget {
         child: SafeArea(
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 30,
-                vertical: 40,
-              ),
-
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
 
                   const SizedBox(height: 60),
 
-                  // Logo
+                  // LOGO
                   Container(
                     width: 90,
                     height: 90,
@@ -50,13 +83,6 @@ class LoginPage extends StatelessWidget {
                         ],
                       ),
                       borderRadius: BorderRadius.circular(22),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Color(0x66B026FF),
-                          blurRadius: 20,
-                          spreadRadius: 2,
-                        ),
-                      ],
                     ),
                     child: const Center(
                       child: Text(
@@ -76,35 +102,28 @@ class LoginPage extends StatelessWidget {
                     "KosCash",
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 34,
+                      fontSize: 32,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
 
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 5),
 
                   const Text(
-                    "Kelola keuangan kosmu dengan mudah",
+                    "Kelola keuangan kos dengan mudah",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: Colors.white70),
                   ),
 
                   const SizedBox(height: 40),
 
-                  // Login Card
+                  // CARD LOGIN
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
                       color: AppColors.cardColor,
                       borderRadius: BorderRadius.circular(28),
-                      border: Border.all(
-                        color: Colors.white12,
-                      ),
                     ),
-
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -113,19 +132,21 @@ class LoginPage extends StatelessWidget {
                           "Masuk",
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 24,
+                            fontSize: 22,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
 
                         const SizedBox(height: 20),
 
+                        // EMAIL
                         TextField(
+                          controller: emailController,
                           style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
                             hintText: "Email",
                             hintStyle: const TextStyle(color: Colors.white54),
-                            prefixIcon: const Icon(Icons.email_outlined, color: Colors.white54),
+                            prefixIcon: const Icon(Icons.email, color: Colors.white54),
                             filled: true,
                             fillColor: Colors.white10,
                             border: OutlineInputBorder(
@@ -137,13 +158,15 @@ class LoginPage extends StatelessWidget {
 
                         const SizedBox(height: 15),
 
+                        // PASSWORD
                         TextField(
+                          controller: passwordController,
                           obscureText: true,
                           style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
                             hintText: "Password",
                             hintStyle: const TextStyle(color: Colors.white54),
-                            prefixIcon: const Icon(Icons.lock_outline, color: Colors.white54),
+                            prefixIcon: const Icon(Icons.lock, color: Colors.white54),
                             filled: true,
                             fillColor: Colors.white10,
                             border: OutlineInputBorder(
@@ -153,12 +176,30 @@ class LoginPage extends StatelessWidget {
                           ),
                         ),
 
-                        const SizedBox(height: 10),
+                        const SizedBox(height: 20),
 
                         Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: const Text("Lupa Password"),
+                                    content: const Text(
+                                      "Fitur reset password belum terhubung ke database.",
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: const Text("OK"),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            },
                             child: const Text(
                               "Lupa Password?",
                               style: TextStyle(color: Colors.white70),
@@ -166,11 +207,10 @@ class LoginPage extends StatelessWidget {
                           ),
                         ),
 
-                        const SizedBox(height: 10),
-
+                        // BUTTON LOGIN
                         SizedBox(
                           width: double.infinity,
-                          height: 55,
+                          height: 50,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primaryPurple,
@@ -178,19 +218,13 @@ class LoginPage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(15),
                               ),
                             ),
-                            onPressed: () {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const MainNavigationPage(),
-                                ),
-                              );
-                            },
-                            child: const Text(
+                            onPressed: isLoading ? null : login,
+                            child: isLoading
+                                ? const CircularProgressIndicator(color: Colors.white)
+                                : const Text(
                               "Masuk",
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 16,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -199,6 +233,7 @@ class LoginPage extends StatelessWidget {
 
                         const SizedBox(height: 20),
 
+                        // REGISTER
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -218,11 +253,11 @@ class LoginPage extends StatelessWidget {
                               child: const Text(
                                 "Daftar",
                                 style: TextStyle(
-                                  color: AppColors.primaryPurple,
+                                  color: Colors.purpleAccent,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            ),
+                            )
                           ],
                         ),
                       ],

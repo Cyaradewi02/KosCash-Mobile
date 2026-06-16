@@ -1,11 +1,46 @@
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
+import '../models/transaction_model.dart';
 
 class SavingPage extends StatelessWidget {
-  const SavingPage({super.key});
+  final List<TransactionModel> transactions;
+
+  const SavingPage({
+    super.key,
+    required this.transactions,
+  });
+
+  int get totalPengeluaran {
+    return transactions.fold(
+      0,
+          (sum, item) => sum + item.amount,
+    );
+  }
+
+  final int budgetHemat = 1400000;
 
   @override
   Widget build(BuildContext context) {
+    double progress = totalPengeluaran / budgetHemat;
+
+    if (progress > 1) {
+      progress = 1;
+    }
+
+    String status;
+    Color statusColor;
+
+    if (totalPengeluaran < budgetHemat * 0.5) {
+      status = "🟢 Pengeluaran masih aman";
+      statusColor = Colors.green;
+    } else if (totalPengeluaran < budgetHemat) {
+      status = "🟡 Mulai kurangi pengeluaran";
+      statusColor = Colors.orange;
+    } else {
+      status = "🔴 Aktifkan mode hemat";
+      statusColor = Colors.red;
+    }
+
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -20,7 +55,6 @@ class SavingPage extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.all(20),
             children: [
-
               const Text(
                 "Mode Hemat",
                 style: TextStyle(
@@ -35,25 +69,15 @@ class SavingPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.2),
+                  color: statusColor.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(25),
                 ),
-                child: const Row(
-                  mainAxisAlignment:
-                  MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Mode Hemat",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
-                    ),
-                    Switch(
-                      value: true,
-                      onChanged: null,
-                    ),
-                  ],
+                child: Text(
+                  status,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
                 ),
               ),
 
@@ -69,13 +93,16 @@ class SavingPage extends StatelessWidget {
                   children: [
                     const Text(
                       "Target Budget Hemat",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
                     ),
+
                     const SizedBox(height: 10),
 
-                    const Text(
-                      "Rp 1.400.000",
-                      style: TextStyle(
+                    Text(
+                      "Rp $budgetHemat",
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 26,
                         fontWeight: FontWeight.bold,
@@ -85,10 +112,18 @@ class SavingPage extends StatelessWidget {
                     const SizedBox(height: 15),
 
                     LinearProgressIndicator(
-                      value: 0.10,
+                      value: progress,
                       minHeight: 8,
-                      borderRadius:
-                      BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+
+                    const SizedBox(height: 15),
+
+                    Text(
+                      "Pengeluaran saat ini : Rp $totalPengeluaran",
+                      style: const TextStyle(
+                        color: Colors.white70,
+                      ),
                     ),
                   ],
                 ),
@@ -96,12 +131,23 @@ class SavingPage extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              _tip("🍜", "Masak sendiri",
-                  "Hemat hingga 60%"),
-              _tip("🚶", "Jalan kaki",
-                  "Skip ojol untuk jarak dekat"),
-              _tip("☕", "Kurangi jajan",
-                  "Batasi kopi 2x seminggu"),
+              _tip(
+                "🍜",
+                "Masak sendiri",
+                "Hemat hingga 60%",
+              ),
+
+              _tip(
+                "🚶",
+                "Jalan kaki",
+                "Skip ojol untuk jarak dekat",
+              ),
+
+              _tip(
+                "☕",
+                "Kurangi jajan",
+                "Batasi kopi 2x seminggu",
+              ),
             ],
           ),
         ),

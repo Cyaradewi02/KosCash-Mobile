@@ -1,11 +1,26 @@
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
+import '../models/transaction_model.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  final List<TransactionModel> transactions;
+
+  const HomePage({
+    super.key,
+    required this.transactions,
+  });
+
+  int get totalPengeluaran {
+    return transactions.fold(
+      0,
+          (sum, item) => sum + item.amount,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    int sisaBudget = 2000000 - totalPengeluaran;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
@@ -27,7 +42,6 @@ class HomePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 const Text(
                   "Dashboard",
                   style: TextStyle(
@@ -45,15 +59,15 @@ class HomePage extends StatelessWidget {
                       child: _card(
                         "Budget Bulan Ini",
                         "Rp 2.000.000",
-                        "5 transaksi",
+                        "${transactions.length} transaksi",
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: _card(
                         "Sisa Budget",
-                        "Rp 1.865.000",
-                        "93% tersisa",
+                        "Rp $sisaBudget",
+                        "${((sisaBudget / 2000000) * 100).toStringAsFixed(0)}% tersisa",
                       ),
                     ),
                   ],
@@ -78,6 +92,7 @@ class HomePage extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+
                       const SizedBox(height: 20),
 
                       _progress("🍔 Makan", 0.6, Colors.red),
@@ -96,17 +111,21 @@ class HomePage extends StatelessWidget {
                     color: AppColors.cardColor,
                     borderRadius: BorderRadius.circular(25),
                   ),
-                  child: const Column(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "7 Hari Terakhir",
-                        style: TextStyle(color: Colors.white70),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        "Rp 135.000",
+                      const Text(
+                        " Pengeluaran Hari Ini",
                         style: TextStyle(
+                          color: Colors.white70,
+                        ),
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      Text(
+                        "Rp $totalPengeluaran",
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
@@ -135,7 +154,9 @@ class HomePage extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(color: Colors.white70),
+            style: const TextStyle(
+              color: Colors.white70,
+            ),
           ),
           const SizedBox(height: 10),
           Text(
@@ -148,7 +169,9 @@ class HomePage extends StatelessWidget {
           ),
           Text(
             subtitle,
-            style: const TextStyle(color: Colors.white54),
+            style: const TextStyle(
+              color: Colors.white54,
+            ),
           ),
         ],
       ),
@@ -161,15 +184,18 @@ class HomePage extends StatelessWidget {
       child: Column(
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 title,
-                style: const TextStyle(color: Colors.white),
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
               ),
             ],
           ),
+
           const SizedBox(height: 8),
+
           LinearProgressIndicator(
             value: value,
             color: color,

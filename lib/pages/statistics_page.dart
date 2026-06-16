@@ -1,8 +1,21 @@
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
+import '../models/transaction_model.dart';
 
 class StatisticsPage extends StatelessWidget {
-  const StatisticsPage({super.key});
+  final List<TransactionModel> transactions;
+
+  const StatisticsPage({
+    super.key,
+    required this.transactions,
+  });
+
+  int get totalPengeluaran {
+    return transactions.fold(
+      0,
+          (sum, item) => sum + item.amount,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +40,6 @@ class StatisticsPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 const Text(
                   "Statistik",
                   style: TextStyle(
@@ -54,8 +66,8 @@ class StatisticsPage extends StatelessWidget {
                     Expanded(
                       child: _summaryCard(
                         "Bulan Ini",
-                        "Rp 135.000",
-                        "5 transaksi",
+                        "Rp $totalPengeluaran",
+                        "${transactions.length} transaksi",
                       ),
                     ),
 
@@ -64,7 +76,9 @@ class StatisticsPage extends StatelessWidget {
                     Expanded(
                       child: _summaryCard(
                         "Rata-rata/Hari",
-                        "Rp 27.000",
+                        transactions.isEmpty
+                            ? "Rp 0"
+                            : "Rp ${(totalPengeluaran / 7).toStringAsFixed(0)}",
                         "7 hari terakhir",
                       ),
                     ),
@@ -80,12 +94,10 @@ class StatisticsPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(25),
                   ),
                   child: Column(
-                    crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-
                       const Text(
-                        "Pengeluaran per Kategori",
+                        "Daftar Transaksi",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 18,
@@ -95,32 +107,51 @@ class StatisticsPage extends StatelessWidget {
 
                       const SizedBox(height: 20),
 
-                      _category(
-                        "🍜 Makan",
-                        "Rp 60.000",
-                        0.60,
-                        Colors.orange,
-                      ),
+                      if (transactions.isEmpty)
+                        const Text(
+                          "Belum ada transaksi",
+                          style: TextStyle(color: Colors.white70),
+                        ),
 
-                      _category(
-                        "🛍 Belanja",
-                        "Rp 40.000",
-                        0.40,
-                        Colors.purple,
-                      ),
+                      ...transactions.map(
+                            (item) => Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    item.category,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
 
-                      _category(
-                        "🚌 Transport",
-                        "Rp 20.000",
-                        0.20,
-                        Colors.blue,
-                      ),
+                                  Text(
+                                    "Rp ${item.amount}",
+                                    style: const TextStyle(
+                                      color: Colors.white70,
+                                    ),
+                                  ),
+                                ],
+                              ),
 
-                      _category(
-                        "☕ Nongkrong",
-                        "Rp 15.000",
-                        0.15,
-                        Colors.green,
+                              const SizedBox(height: 5),
+
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  item.note,
+                                  style: const TextStyle(
+                                    color: Colors.white54,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -135,32 +166,31 @@ class StatisticsPage extends StatelessWidget {
                     color: AppColors.cardColor,
                     borderRadius: BorderRadius.circular(25),
                   ),
-                  child: const Column(
+                  child: Column(
                     crossAxisAlignment:
                     CrossAxisAlignment.start,
                     children: [
-
-                      Text(
+                      const Text(
                         "7 Hari Terakhir",
                         style: TextStyle(
                           color: Colors.white70,
                         ),
                       ),
 
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
 
                       Text(
-                        "Rp 135.000",
-                        style: TextStyle(
+                        "Rp $totalPengeluaran",
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
 
-                      SizedBox(height: 5),
+                      const SizedBox(height: 5),
 
-                      Text(
+                      const Text(
                         "Total pengeluaran minggu ini",
                         style: TextStyle(
                           color: Colors.white54,
@@ -180,8 +210,7 @@ class StatisticsPage extends StatelessWidget {
   static Widget _summaryCard(
       String title,
       String amount,
-      String subtitle,
-      ) {
+      String subtitle) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -189,10 +218,8 @@ class StatisticsPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
-        crossAxisAlignment:
-        CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           Text(
             title,
             style: const TextStyle(
@@ -217,56 +244,6 @@ class StatisticsPage extends StatelessWidget {
             subtitle,
             style: const TextStyle(
               color: Colors.white54,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  static Widget _category(
-      String title,
-      String amount,
-      double value,
-      Color color,
-      ) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 15),
-      child: Column(
-        children: [
-
-          Row(
-            mainAxisAlignment:
-            MainAxisAlignment.spaceBetween,
-            children: [
-
-              Text(
-                title,
-                style: const TextStyle(
-                  color: Colors.white,
-                ),
-              ),
-
-              Text(
-                amount,
-                style: const TextStyle(
-                  color: Colors.white70,
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 8),
-
-          ClipRRect(
-            borderRadius:
-            BorderRadius.circular(10),
-            child: LinearProgressIndicator(
-              value: value,
-              minHeight: 8,
-              color: color,
-              backgroundColor:
-              Colors.white12,
             ),
           ),
         ],
