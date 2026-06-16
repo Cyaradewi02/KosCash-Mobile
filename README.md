@@ -1,4 +1,7 @@
 # Aplikasi KosCash
+Aplikasi pencatatan keuangan yang dirancang khusus untuk anak kos agar lebih mudah mengatur pemasukan dan pengeluaran harian. Aplikasi ini membantu pengguna mencatat transaksi, memantau sisa uang, serta melihat riwayat keuangan secara sederhana dan terstruktur.
+
+Dengan KosCash, pengguna dapat lebih disiplin dalam mengelola keuangan sehingga dapat membantu mengontrol pengeluaran dan meningkatkan kebiasaan hemat selama tinggal di kos.
 
 # Nama Anggota Kelompok
 
