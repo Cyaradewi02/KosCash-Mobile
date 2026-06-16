@@ -4,8 +4,6 @@
 
 - Cyaradewi Rafifa Ekameyrisna
 - Sherly Kartika Dewi Azzahra
-- Virani Yulfina
-- Muhammad Izzul Aulia
 
 A new Flutter project.
 
